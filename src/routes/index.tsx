@@ -244,9 +244,10 @@ function BalanceBar({ cards }: { cards: CardT[] }) {
       </div>
       <div className="flex w-40 flex-col gap-1">
         <div className="flex justify-between text-[11px] text-muted-foreground"><span>Target 50/50</span><span className={cn("font-semibold", tone)}>{b.status}</span></div>
-        <div className="flex h-2 overflow-hidden rounded-full bg-secondary">
-          <div className="h-full bg-kj transition-all" style={{ width: `${b.kjPct}%` }} />
-          <div className="h-full bg-ab transition-all" style={{ width: `${b.abPct}%` }} />
+        <div className="relative flex h-2 w-full overflow-hidden rounded-full bg-secondary">
+          <div className="h-full bg-kj transition-all" style={{ flexGrow: b.kjPct, flexBasis: 0 }} />
+          <div className="h-full bg-ab transition-all" style={{ flexGrow: b.abPct, flexBasis: 0 }} />
+          <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-background/70" />
         </div>
       </div>
       <div className="flex items-center gap-2 text-right">
