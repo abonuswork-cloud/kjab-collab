@@ -86,7 +86,7 @@ function Board() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4 px-6 pb-6 pt-10">
+      <header className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 pb-6 pt-10">
         <div>
           <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary">
             <Heart className="h-4 w-4 fill-current" /> KJ & AB
@@ -94,6 +94,7 @@ function Board() {
           <h1 className="font-display text-4xl font-semibold text-foreground md:text-5xl">Our Home Board</h1>
           <p className="mt-1 text-muted-foreground">Tasks, chores & reminders — together.</p>
         </div>
+        <BalanceBar cards={cards} />
         <div className="flex items-center gap-1 rounded-full border bg-card p-1">
           {(["All", "KJ", "AB", "Both"] as const).map((f) => (
             <button key={f} onClick={() => setFilter(f)}
@@ -105,7 +106,7 @@ function Board() {
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-7xl gap-5 px-6 pb-16 md:grid-cols-2 xl:grid-cols-4">
+      <main className="mx-auto grid max-w-7xl grid-cols-4 gap-5 overflow-x-auto px-6 pb-16 min-w-[1000px]">
         {COLUMNS.map((col) => {
           const list = visible.filter((c) => c.column === col.id);
           return (
@@ -139,11 +140,8 @@ function Board() {
                       {c.description && <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{c.description}</p>}
                       <div className="mt-3 flex items-center gap-2 text-xs">
                         <span className="rounded-md bg-secondary px-1.5 py-0.5 font-bold text-secondary-foreground">{c.size}</span>
-                        {c.due && (
-                          <span className={cn("flex items-center gap-1", overdue ? "font-semibold text-destructive" : "text-muted-foreground")}>
-                            <CalendarIcon className="h-3 w-3" />{format(new Date(c.due), "MMM d")}
-                          </span>
-                        )}
+                        <DuePicker value={c.due} overdue={!!overdue}
+                          onChange={(v) => setCards((cs) => cs.map((x) => (x.id === c.id ? { ...x, due: v } : x)))} />
                         {c.link && (
                           <a href={c.link} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}
                             className="ml-auto flex items-center gap-1 text-primary hover:underline">
@@ -166,6 +164,66 @@ function Board() {
 
       <CardDialog card={editing} onClose={() => setEditing(null)} onSave={save} onDelete={remove} />
     </div>
+  );
+}
+
+const POINTS: Record<Size, number> = { S: 1, M: 2, L: 3 };
+
+export function balance(cards: CardT[]) {
+  let kj = 0, ab = 0;
+  for (const c of cards) {
+    const p = POINTS[c.size];
+    if (c.assignee === "KJ") kj += p;
+    else if (c.assignee === "AB") ab += p;
+    else { kj += p / 2; ab += p / 2; }
+  }
+  const total = kj + ab;
+  const kjPct = total ? Math.round((kj / total) * 100) : 50;
+  const diff = Math.abs(kjPct - (100 - kjPct));
+  const status = diff <= 15 ? "Balanced" : diff <= 35 ? "Slight imbalance" : "High disparity";
+  return { kj, ab, kjPct, abPct: 100 - kjPct, status };
+}
+
+function BalanceBar({ cards }: { cards: CardT[] }) {
+  const b = balance(cards);
+  const tone = b.status === "Balanced" ? "text-success" : b.status === "Slight imbalance" ? "text-warning" : "text-primary";
+  const fmt = (n: number) => (Number.isInteger(n) ? n : n.toFixed(1));
+  return (
+    <div className="flex items-center gap-4 rounded-xl border bg-card px-4 py-2.5 text-xs">
+      <div className="flex items-center gap-2">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-kj text-[11px] font-bold text-kj-foreground">KJ</span>
+        <div><div className="text-muted-foreground">KJ</div><div className="font-bold">{fmt(b.kj)} pts ({b.kjPct}%)</div></div>
+      </div>
+      <div className="flex w-40 flex-col gap-1">
+        <div className="flex justify-between text-[11px] text-muted-foreground"><span>Target 50/50</span><span className={cn("font-semibold", tone)}>{b.status}</span></div>
+        <div className="flex h-2 overflow-hidden rounded-full bg-secondary">
+          <div className="h-full bg-kj transition-all" style={{ width: `${b.kjPct}%` }} />
+          <div className="h-full bg-ab transition-all" style={{ width: `${b.abPct}%` }} />
+        </div>
+      </div>
+      <div className="flex items-center gap-2 text-right">
+        <div><div className="text-muted-foreground">AB</div><div className="font-bold">{fmt(b.ab)} pts ({b.abPct}%)</div></div>
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ab text-[11px] font-bold text-ab-foreground">AB</span>
+      </div>
+    </div>
+  );
+}
+
+function DuePicker({ value, overdue, onChange }: { value?: string; overdue: boolean; onChange: (v?: string) => void }) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button type="button" onClick={(e) => e.stopPropagation()} draggable={false}
+          className={cn("flex items-center gap-1 rounded-md border px-1.5 py-0.5 hover:border-primary",
+            overdue ? "font-semibold text-destructive" : value ? "text-foreground" : "border-dashed text-muted-foreground")}>
+          <CalendarIcon className="h-3 w-3" />{value ? format(new Date(value), "MMM d") : "Due date"}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start" onClick={(e) => e.stopPropagation()}>
+        <Calendar mode="single" selected={value ? new Date(value) : undefined}
+          onSelect={(dt) => onChange(dt ? dt.toISOString() : undefined)} initialFocus className="p-3 pointer-events-auto" />
+      </PopoverContent>
+    </Popover>
   );
 }
 
