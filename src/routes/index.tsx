@@ -30,7 +30,7 @@ type Assignee = "KJ" | "AB" | "Both";
 type Category = "Task" | "Chore" | "Reminder" | "Errand";
 type ColumnId = "todo" | "doing" | "waiting" | "done";
 type CardT = {
-  id: string; title: string; description: string; link: string; due?: string;
+  id: string; title: string; description: string; link: string; due?: string | undefined;
   size: Size; assignee: Assignee; category: Category; column: ColumnId;
 };
 
@@ -209,7 +209,7 @@ function BalanceBar({ cards }: { cards: CardT[] }) {
   );
 }
 
-function DuePicker({ value, overdue, onChange }: { value?: string; overdue: boolean; onChange: (v?: string) => void }) {
+function DuePicker({ value, overdue, onChange }: { value?: string | undefined; overdue: boolean; onChange: (v?: string) => void }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
