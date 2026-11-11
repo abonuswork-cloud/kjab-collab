@@ -14,13 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      board_members: {
+        Row: {
+          email: string | null
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          email?: string | null
+          joined_at?: string
+          user_id: string
+        }
+        Update: {
+          email?: string | null
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cards: {
+        Row: {
+          assignee: string
+          attachments: Json
+          column_id: string
+          created_at: string
+          description: string
+          due: string | null
+          id: string
+          link: string
+          size: string
+          subtasks: Json
+          title: string
+        }
+        Insert: {
+          assignee?: string
+          attachments?: Json
+          column_id?: string
+          created_at?: string
+          description?: string
+          due?: string | null
+          id?: string
+          link?: string
+          size?: string
+          subtasks?: Json
+          title: string
+        }
+        Update: {
+          assignee?: string
+          attachments?: Json
+          column_id?: string
+          created_at?: string
+          description?: string
+          due?: string | null
+          id?: string
+          link?: string
+          size?: string
+          subtasks?: Json
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_board_member: { Args: { _uid: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794426209748,
+      "tag": "0000_board_members_cards",
+      "breakpoints": true
+    }
+  ]
 }

@@ -28,3 +28,6 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- Board access: the first two accounts to sign in are recorded as board members by a database trigger, and every card/attachment rule checks membership — this keeps the board private to the couple without hardcoding emails.
+- Board math and card types live in src/lib/board.ts so they can be tested without the page.
