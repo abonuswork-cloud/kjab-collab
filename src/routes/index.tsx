@@ -167,7 +167,7 @@ function Board() {
   );
 }
 
-const POINTS: Record<Size, number> = { S: 1, M: 2, L: 3 };
+const POINTS: Record<Size, number> = { S: 1, M: 3, L: 8 };
 
 export function balance(cards: CardT[]) {
   let kj = 0, ab = 0;
