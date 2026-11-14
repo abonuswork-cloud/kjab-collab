@@ -1,14 +1,20 @@
-# Welcome to your Lovable project
+# ABKJ Marriage Collab
+
+generate an interactive simple kanban board for my Marriage Collaboration - ie. tasks chores reminders etc that my wife and I need to accomplish. add sub-fields for cards: Due Date (calendar picker), Size (S/M/L effort), Assignee (KJ/AB/allow for both), Description, Link, etc.
+
+give me suggested design and look and feel.
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://kjab-collab.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/47552ae3-f4c2-4a7a-ac8a-b3b17902185c).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +26,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
